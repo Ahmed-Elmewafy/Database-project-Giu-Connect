@@ -1,4 +1,17 @@
-﻿create table Opportunity (
+﻿create table Cooperation_Agreement (
+	agreement_id INT PRIMARY KEY IDENTITY,
+	title VARCHAR(255) ,
+	scope VARCHAR(255),
+	start_date DATE ,
+	end_date DATE ,
+	status VARCHAR(255),
+	partner_uni_id INT FOREIGN KEY REFERENCES Partner_University(uni_id) on delete set null on update cascade,
+	coordinator_id INT FOREIGN KEY REFERENCES GIU_Academic(person_id) on delete set null on update cascade 
+);
+
+go
+
+create table Opportunity (
 	opp_id int identity,
 	title varchar(255),
 	description varchar(1000),
@@ -96,16 +109,9 @@ create table Application_Document(
 	primary key (app_id, doc_type),
 	foreign key (app_id) references Application on delete set null on update cascade
 );
-create table Cooperation_Agreement (
-	agreement_id INT PRIMARY KEY IDENTITY,
-	title VARCHAR(255) ,
-	scope VARCHAR(255),
-	start_date DATE ,
-	end_date DATE ,
-	status VARCHAR(255),
-	partner_uni_id INT FOREIGN KEY REFERENCES Partner_University(uni_id) on delete set null on update cascade,
-	coordinator_id INT FOREIGN KEY REFERENCES GIU_Academic(person_id) on delete set null on update cascade 
-);
+
+
+
 
 go
 
