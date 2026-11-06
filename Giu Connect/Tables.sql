@@ -95,4 +95,4 @@ create table Application_Document(
 	upload_date date,
 	primary key (app_id, doc_type),
 	foreign key (app_id) references Application on delete set null on update cascade
-);
+);	
