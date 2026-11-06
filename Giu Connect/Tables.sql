@@ -376,6 +376,7 @@ eligibility_conditions VARCHAR(255),
 status VARCHAR(255),
 
 );
+Go
 create table Interview(
 interview_id INT IDENTITY,
 date DATE,
