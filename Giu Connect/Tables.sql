@@ -1,7 +1,7 @@
 ﻿
 create table Department
 (
-department_id int PRIMARY KEY IDENTITY,
+dept_id int PRIMARY KEY IDENTITY,
 name VARCHAR(255),
 description VARCHAR(1000)
 );
@@ -110,6 +110,7 @@ description VARCHAR(1000),
 pdept_id int,
 FOREIGN KEY(pdept_id) REFERENCES Partner_Department ON DELETE SET NULL ON UPDATE CASCADE,
 );
+GO
 
 create table Person (
 person_id int identity primary key,
@@ -201,6 +202,8 @@ read_status varchar(255) not null,
 recipient_id int,
 foreign key(recipient_id) references Person(person_id) on delete cascade on update cascade
 );
+GO
+
 create table Cooperation_Agreement (
 	agreement_id INT PRIMARY KEY IDENTITY,
 	title VARCHAR(255) ,
