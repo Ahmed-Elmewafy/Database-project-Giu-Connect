@@ -317,8 +317,6 @@ create table Application_Document(
 );
 
 
-
-
 go
 
 create table Mobility_Agreement(
@@ -360,7 +358,9 @@ FOREIGN KEY(agreement_id) REFERENCES Cooperation_Agreement(agreement_id) on dele
 intent VARCHAR(255),
 collab_scope VARCHAR(255),
 renewal_terms VARCHAR(255)
+
 );
+
 go
 
 create table Funding_Opportunity(
@@ -372,7 +372,9 @@ amount int,
 deadline VARCHAR(255),
 eligibility_conditions VARCHAR(255),
 status VARCHAR(255),
+
 );
+
 go
 
 create table Interview(
