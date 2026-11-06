@@ -1,5 +1,4 @@
-﻿
-create table Faculty
+﻿create table Faculty
 (
 faculty_id int PRIMARY KEY IDENTITY,
 name VARCHAR(255),
@@ -25,18 +24,20 @@ degree_level varchar(255),
 total_credit_hours int,
 description VARCHAR(1000),
 dept_id int,
-FOREIGN KEY(dept_id) REFERENCES Department ON DELETE cascade ON UPDATE CASCADE,
+CHECK (total_credit_hours > 0),
+FOREIGN KEY(dept_id) REFERENCES Department ON DELETE cascade ON UPDATE CASCADE
 );
 GO
 
-create table Course
-(course_id int PRIMARY KEY IDENTITY,
+create table Course(
+ course_id int PRIMARY KEY IDENTITY,
  code VARCHAR(255),
  title VARCHAR(255),
  credit_hours int,
  level varchar(255),
  program_id int,
- FOREIGN KEY(program_id) REFERENCES Program ON DELETE cascade ON UPDATE CASCADE,
+ CHECK (credit_hours > 0),
+ FOREIGN KEY(program_id) REFERENCES Program ON DELETE cascade ON UPDATE CASCADE
 );
 GO
 
@@ -80,7 +81,7 @@ GO
 create table GIU
 (
 uni_id int PRIMARY KEY,
-FOREIGN KEY(uni_id) REFERENCES University ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY(uni_id) REFERENCES University ON DELETE CASCADE ON UPDATE CASCADE
 );
 GO
 
@@ -89,7 +90,7 @@ create table Partner_University
 uni_id int PRIMARY KEY,
 partnership_status VARCHAR(255),
 contact_info VARCHAR(255),
-FOREIGN KEY(uni_id) REFERENCES University ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY(uni_id) REFERENCES University ON DELETE CASCADE ON UPDATE CASCADE
 );
 GO
 
@@ -98,8 +99,8 @@ create table Partner_Department
 pdept_id int PRIMARY KEY IDENTITY,
 name VARCHAR(255),
 description VARCHAR(1000),
-partner_uni_id int 
-FOREIGN KEY(partner_uni_id) REFERENCES Partner_University ON DELETE cascade ON UPDATE CASCADE,
+partner_uni_id int,
+FOREIGN KEY(partner_uni_id) REFERENCES Partner_University ON DELETE cascade ON UPDATE CASCADE
 );
 GO 
 
@@ -110,15 +111,15 @@ name VARCHAR(255),
 degree_level varchar (255),
 description VARCHAR(1000),
 pdept_id int,
-FOREIGN KEY(pdept_id) REFERENCES Partner_Department ON DELETE cascade ON UPDATE CASCADE,
+FOREIGN KEY(pdept_id) REFERENCES Partner_Department ON DELETE cascade ON UPDATE CASCADE
 );
 GO
 
 create table Person (
 person_id int identity primary key,
 full_name varchar(255) not null,
-email varchar(255),
-phone varchar (20) unique,
+email varchar(255) unique not null,
+phone varchar (20) unique not null,
 account_status varchar(255) not null
 );
 
@@ -152,7 +153,7 @@ person_id int primary key,
 academic_rank varchar(255) not null,
 dept_id int,
 foreign key(person_id) references Person(person_id) on delete cascade on update cascade,
-foreign key(dept_id) references Department(dept_id) on delete cascade on update cascade,
+foreign key(dept_id) references Department(dept_id) on delete cascade on update cascade
 );
 
 go
@@ -210,11 +211,12 @@ create table Cooperation_Agreement (
 	agreement_id INT PRIMARY KEY IDENTITY,
 	title VARCHAR(255) ,
 	scope VARCHAR(255),
-	start_date DATE ,
-	end_date DATE ,
+	start_date DATETIME ,
+	end_date DATETIME ,
 	status VARCHAR(255),
-	partner_uni_id INT FOREIGN KEY REFERENCES Partner_University(uni_id) on delete cascade on update cascade,
-	coordinator_id INT FOREIGN KEY REFERENCES GIU_Academic(person_id) 
+	check (end_date >= start_date),
+	partner_uni_id INT REFERENCES Partner_University(uni_id) on delete cascade on update cascade,
+	coordinator_id INT REFERENCES GIU_Academic(person_id) 
 );
 
 go
@@ -231,6 +233,8 @@ create table Opportunity (
 	location_mode varchar(255),
 	agreement_id int,
 	offered_by_rep_id int,
+	CHECK (app_close_date >= app_open_date),
+	CHECK (capacity > 0),
 	primary key (opp_id),
 	foreign key (agreement_id) references Cooperation_Agreement on delete cascade on update cascade,
 	foreign key (offered_by_rep_id) references Company_Rep
@@ -285,7 +289,7 @@ go
 create table Mobility_Program(
 	opp_id int,
 	mobility_type varchar(255),
-	duration time,
+	duration varchar(255),
 	sending_uni_id int,
 	host_uni_id int,
 	primary key (opp_id),
@@ -328,8 +332,8 @@ FOREIGN KEY(agreement_id) REFERENCES Cooperation_Agreement(agreement_id) on dele
 exchange_terms VARCHAR(255),
 double_degree_terms VARCHAR(255),
 seat_quota INT,
-tuition_arrangement VARCHAR(255)
-
+tuition_arrangement VARCHAR(255),
+CHECK (seat_quota > 0)
 );
 
 go
@@ -394,9 +398,10 @@ go
 create table Participation(
 part_id INT IDENTITY,
 status VARCHAR(255),
-start_date DATE,
-end_date DATE,
+start_date DATETIME,
+end_date DATETIME,
 app_id INT,
+CHECK (end_date >= start_date),
 PRIMARY KEY (part_id),
 FOREIGN KEY (app_id) REFERENCES Application(app_id) ON DELETE cascade ON UPDATE CASCADE
 );
@@ -440,8 +445,8 @@ go
 
 create table Professor_Visit(
 visit_id INT IDENTITY,
-start_date DATE,
-end_date DATE,
+start_date DATETIME,
+end_date DATETIME,
 purpose VARCHAR(255),
 travel_arr VARCHAR(255),
 accommodation_arr VARCHAR(255),
@@ -451,6 +456,7 @@ partner_prof_id INT,
 host_faculty_id INT,
 coordinator_id INT,
 agreement_id INT,
+CHECK (end_date >= start_date),
 PRIMARY KEY (visit_id),
 FOREIGN KEY (partner_prof_id) REFERENCES Partner_Professor(person_id) ON DELETE cascade ON UPDATE CASCADE,
 FOREIGN KEY (host_faculty_id) REFERENCES Faculty(faculty_id) ON DELETE cascade ON UPDATE CASCADE,
@@ -485,9 +491,10 @@ project_id INT IDENTITY,
 title VARCHAR(255),
 description VARCHAR(1000),
 status VARCHAR(255),
-start_date DATE,
-end_date DATE,
+start_date DATETIME,
+end_date DATETIME,
 res_agreement_id INT,
+CHECK (end_date >= start_date),
 PRIMARY KEY (project_id),
 FOREIGN KEY (res_agreement_id) REFERENCES Research_Agreement(agreement_id) ON DELETE cascade ON UPDATE CASCADE
 );
@@ -570,7 +577,7 @@ go
 create table Conducts_Interview(
 interviewer_id INT,
 interview_id INT,
-PRIMARY KEY (interview_id, interviewer_id),
+PRIMARY KEY (interviewer_id, interview_id),
 FOREIGN KEY (interview_id) REFERENCES Interview(interview_id) ON DELETE cascade ON UPDATE CASCADE,
 FOREIGN KEY (interviewer_id) REFERENCES Interviewer(interviewer_id)
 );
@@ -618,8 +625,8 @@ create table Fund_Supports_Mobility(
 fund_id int,
 part_id int,
 primary key(fund_id,part_id),
-foreign key(fund_id) references Funding_Opportunity(fund_id),
-foreign key(part_id) references Mobility(part_id)
+foreign key(fund_id) references Funding_Opportunity(fund_id) on delete cascade on update cascade,
+foreign key(part_id) references Mobility(part_id) on delete cascade on update cascade
 );
 go
 
@@ -663,6 +670,7 @@ create table Prerequisite
 (
 course_id int,
 prereq_course_id int,
+CHECK (course_id <> prereq_course_id),
 PRIMARY KEY (course_id, prereq_course_id),
 FOREIGN KEY (course_id) REFERENCES Course(course_id) ON DELETE cascade ON UPDATE CASCADE,
 FOREIGN KEY (prereq_course_id) REFERENCES Course(course_id)
@@ -675,7 +683,7 @@ program_id int,
 field_id int,
 PRIMARY KEY(program_id, field_id),
 FOREIGN KEY (program_id) REFERENCES Program(program_id) ON DELETE cascade ON UPDATE CASCADE,
-FOREIGN KEY (field_id) REFERENCES Field(field_id) ON DELETE cascade ON UPDATE CASCADE,
+FOREIGN KEY (field_id) REFERENCES Field(field_id) ON DELETE cascade ON UPDATE CASCADE
 );
 GO
 
@@ -695,5 +703,5 @@ student_id int,
 skill_id int,
 PRIMARY KEY (student_id, skill_id),
 FOREIGN KEY (student_id) REFERENCES Student(person_id) ON DELETE cascade ON UPDATE CASCADE,
-FOREIGN KEY (skill_id) REFERENCES Skill(skill_id) ON DELETE cascade ON UPDATE CASCADE,
+FOREIGN KEY (skill_id) REFERENCES Skill(skill_id) ON DELETE cascade ON UPDATE CASCADE
 );
