@@ -358,7 +358,9 @@ FOREIGN KEY(agreement_id) REFERENCES Cooperation_Agreement(agreement_id) on dele
 intent VARCHAR(255),
 collab_scope VARCHAR(255),
 renewal_terms VARCHAR(255)
+
 );
+
 go
 
 create table Funding_Opportunity(
@@ -370,9 +372,8 @@ amount int,
 deadline VARCHAR(255),
 eligibility_conditions VARCHAR(255),
 status VARCHAR(255),
-);
-go
 
+);
 create table Interview(
 interview_id INT IDENTITY,
 date DATE,
@@ -442,7 +443,7 @@ host_faculty_id INT,
 coordinator_id INT,
 agreement_id INT,
 PRIMARY KEY (visit_id),
-FOREIGN KEY (partner_prof_id) REFERENCES Partner_Professor(person_id) ON DELETE SET NULL ON UPDATE CASCADE,
+FOREIGN KEY (partner_prof_id) REFERENCES Professor(prof_id) ON DELETE SET NULL ON UPDATE CASCADE,
 FOREIGN KEY (host_faculty_id) REFERENCES Faculty(faculty_id) ON DELETE SET NULL ON UPDATE CASCADE,
 FOREIGN KEY (coordinator_id) REFERENCES GIU_Academic(person_id) ON DELETE SET NULL ON UPDATE CASCADE,
 FOREIGN KEY (agreement_id) REFERENCES Cooperation_Agreement(agreement_id) ON DELETE SET NULL ON UPDATE CASCADE
