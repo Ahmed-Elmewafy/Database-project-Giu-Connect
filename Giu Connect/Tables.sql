@@ -88,6 +88,9 @@ read_status varchar(255) not null,
 recipient_id int,
 foreign key(recipient_id) references Person(person_id) on delete cascade on update cascade
 );
+
+go
+
 create table Cooperation_Agreement (
 	agreement_id INT PRIMARY KEY IDENTITY,
 	title VARCHAR(255) ,
@@ -199,8 +202,6 @@ create table Application_Document(
 	primary key (app_id, doc_type),
 	foreign key (app_id) references Application on delete set null on update cascade
 );
-
-
 
 
 go
