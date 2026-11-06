@@ -58,9 +58,9 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
+    <Build Include="Tables.sql" />
     <Build Include="Executions.sql" />
     <Build Include="Insertions.sql" />
     <Build Include="Procedures.sql" />
-    <Build Include="Tables.sql" />
   </ItemGroup>
 </Project>
