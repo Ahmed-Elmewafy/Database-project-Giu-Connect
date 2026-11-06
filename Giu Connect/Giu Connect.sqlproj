@@ -63,7 +63,4 @@
     <Build Include="Procedures.sql" />
     <Build Include="Tables.sql" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Giu Connect.sqlproj.user" />
-  </ItemGroup>
 </Project>
