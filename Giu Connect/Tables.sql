@@ -501,3 +501,42 @@ deadline DATETIME,
 PRIMARY KEY (project_id, deadline),
 FOREIGN KEY (project_id) REFERENCES Research_Project(project_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+Go
+
+create table Prerequisite
+(
+course_id int,
+prereq_course_id int,
+PRIMARY KEY (course_id, prereq_course_id),
+FOREIGN KEY (course_id) REFERENCES Course(course_id) ON DELETE SET NULL ON UPDATE CASCADE,
+FOREIGN KEY (prereq_course_id) REFERENCES Course(course_id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+GO
+
+create table Program_Field
+(
+program_id int,
+field_id int,
+PRIMARY KEY(program_id, field_id),
+FOREIGN KEY (program_id) REFERENCES Program(program_id) ON DELETE SET NULL ON UPDATE CASCADE,
+FOREIGN KEY (field_id) REFERENCES Field(field_id) ON DELETE SET NULL ON UPDATE CASCADE,
+);
+GO
+
+create table Completed_Course
+(
+student_id int,
+course_id int,
+PRIMARY KEY(student_id, course_id),
+FOREIGN KEY (student_id) REFERENCES Student(person_id) ON DELETE SET NULL ON UPDATE CASCADE,
+FOREIGN KEY (course_id) REFERENCES Course(course_id) ON DELETE SET NULL ON UPDATE CASCADE,
+);
+GO
+
+create table Student_Skill
+(
+student_id int,
+skill_id int,
+FOREIGN KEY (student_id) REFERENCES Student(person_id) ON DELETE SET NULL ON UPDATE CASCADE,
+FOREIGN KEY (skill_id) REFERENCES Skill(skill_id) ON DELETE SET NULL ON UPDATE CASCADE,
+);
