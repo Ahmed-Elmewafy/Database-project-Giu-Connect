@@ -2,76 +2,78 @@
 create table Department
 (
 dept_id int PRIMARY KEY IDENTITY,
-name VARCHAR(255),
-description VARCHAR(1000)
+name VARCHAR(150),
+description VARCHAR(500),
+faculty_id int not null
+foreign key(faculty_id) references Faculty(faculty_id) on update cascade
 );
 GO
 
 create table Faculty
 (
 faculty_id int PRIMARY KEY IDENTITY,
-name VARCHAR(255),
-description VARCHAR(1000)
+name VARCHAR(150),
+description VARCHAR(500)
 );
 GO
 
 create table Program
 (
 program_id int PRIMARY KEY IDENTITY,
-name VARCHAR(255),
-description VARCHAR(1000),
-degree_level int,
-total_credit_hours int,
-dept_id int,
-FOREIGN KEY(dept_id) REFERENCES Department ON DELETE SET NULL ON UPDATE CASCADE,
+name VARCHAR(150) not null,
+degree_level varchar(30) not null,
+total_credit_hours int not null,
+description varchar(500),
+dept_id int not null,
+FOREIGN KEY(dept_id) REFERENCES Department ON UPDATE CASCADE,
 );
 GO
 
 create table Course
 (course_id int PRIMARY KEY IDENTITY,
- code VARCHAR(255),
- title VARCHAR(255),
- credit_hours int,
- level int,
- program_id int,
- FOREIGN KEY(program_id) REFERENCES Program ON DELETE SET NULL ON UPDATE CASCADE,
+ code VARCHAR(20) not null,
+ title VARCHAR(150) not null,
+ credit_hours int not null,
+ level int not null,
+ program_id int not null,
+ FOREIGN KEY(program_id) REFERENCES Program ON UPDATE CASCADE,
 );
 GO
 
 create table Field
 (
 field_id int PRIMARY KEY IDENTITY,
-name VARCHAR(255),
-description VARCHAR(1000)
+name VARCHAR(100) not null,
+description VARCHAR(500)
 );
 GO
 
 create table Research_Area
 (
 area_id int PRIMARY KEY IDENTITY,
-name VARCHAR(255),
-description VARCHAR(1000),
-field_id int,
-FOREIGN KEY(field_id) REFERENCES Field ON DELETE SET NULL ON UPDATE CASCADE,
+name VARCHAR(150) not null,
+description VARCHAR(500),
+field_id int not null,
+FOREIGN KEY(field_id) REFERENCES Field ON UPDATE CASCADE,
 );
 GO
 
 create table Skill
 (
 skill_id int PRIMARY KEY IDENTITY,
-name VARCHAR(255),
-category VARCHAR(255),
-description VARCHAR(1000)
+name VARCHAR(100),
+category VARCHAR(50),
+description VARCHAR(500)
 );
 GO
 
 create table University
 (
 uni_id int PRIMARY KEY IDENTITY,
-name VARCHAR(255),
-country VARCHAR(255),
-city VARCHAR(255),
-description VARCHAR(1000)
+name VARCHAR(150) not null,
+country VARCHAR(60) not null,
+city VARCHAR(60) not null,
+description VARCHAR(500)
 );
 GO
 
@@ -85,8 +87,8 @@ GO
 create table Partner_University
 (
 uni_id int PRIMARY KEY,
-partnership_status VARCHAR(255),
-contact_info VARCHAR(255),
+partnership_status VARCHAR(30) not null,
+contact_info VARCHAR(300) not null,
 FOREIGN KEY(uni_id) REFERENCES University ON DELETE CASCADE ON UPDATE CASCADE,
 );
 GO
@@ -94,83 +96,83 @@ GO
 create table Partner_Department
 (
 pdept_id int PRIMARY KEY IDENTITY,
-name VARCHAR(255),
-description VARCHAR(1000),
-uni_id int 
-FOREIGN KEY(uni_id) REFERENCES Partner_University ON DELETE SET NULL ON UPDATE CASCADE,
+name VARCHAR(150) not null,
+description VARCHAR(500),
+uni_id int not null,
+FOREIGN KEY(uni_id) REFERENCES Partner_University ON DELETE cascade ON UPDATE CASCADE,
 );
 GO 
 
 create table Partner_Program
 (
 pprog_id int PRIMARY KEY IDENTITY,
-name VARCHAR(255),
-degree_level int,
-description VARCHAR(1000),
-pdept_id int,
-FOREIGN KEY(pdept_id) REFERENCES Partner_Department ON DELETE SET NULL ON UPDATE CASCADE,
+name VARCHAR(150) not null,
+degree_level varchar(30) not null,
+description VARCHAR(500),
+pdept_id int not null,
+FOREIGN KEY(pdept_id) REFERENCES Partner_Department ON DELETE cascade ON UPDATE CASCADE,
 );
 GO
 
 create table Person (
 person_id int identity primary key,
-full_name varchar(255) not null,
-email varchar(255),
-phone int unique,
-account_status varchar(255) not null
+full_name varchar(150) not null,
+email varchar(150) not null unique,
+phone varchar(30) not null unique,
+account_status varchar(20) not null default 'Active' check (account_status='Active' or account_status='Not Active' or account_status='Suspended')
 );
 
 go
 
 create table Student(
 person_id int primary key,
-student_no int unique not null,
-current_semester int not null,
-gpa decimal(3,2) check(gpa between 0.00 and 5.00),
-language_level int not null,
-cv varchar(255) not null,
-program_id int,
+student_no varchar(20) unique not null,
+current_semester int not null check(current_semester>0),
+gpa decimal(3,2) check(gpa between 0.70 and 5.00),
+language_level varchar(30) not null,
+cv varchar(300),
+program_id int not null,
 foreign key(person_id) references Person(person_id) on delete cascade on update cascade,
-foreign key(program_id) references Program(program_id) on delete set null on update cascade
+foreign key(program_id) references Program(program_id) on update cascade
 );
 
 go
 
 create table Student_Interest(
 person_id int,
-interest varchar(255),
+interest varchar(100),
 primary key(person_id,interest),
-foreign key(person_id) references Student(person_id) on delete set null on update cascade
+foreign key(person_id) references Student(person_id) on delete cascade on update cascade
 );
 
 go
 
 create table GIU_Academic(
 person_id int primary key,
-academic_rank varchar(255) not null,
-dept_id int,
+academic_rank varchar(50) not null,
+dept_id int not null,
 foreign key(person_id) references Person(person_id) on delete cascade on update cascade,
-foreign key(dept_id) references Department(dept_id) on delete set null on update cascade,
+foreign key(dept_id) references Department(dept_id) on update cascade,
 );
 
 go
 
 create table Partner_Professor(
 person_id int primary key,
-title varchar(255) not null,
-pdept_id int,
+title varchar(50) not null,
+pdept_id int not null,
 foreign key(person_id) references Person(person_id) on delete cascade on update cascade,
-foreign key(pdept_id) references Partner_Department(pdept_id) on delete set null on update cascade
+foreign key(pdept_id) references Partner_Department(pdept_id) on update cascade
 );
 
 go
 
 create table Company_Rep(
 person_id int primary key,
-company_name varchar(255) not null,
-sector varchar(255) not null,
-position varchar(255) not null,
-location varchar(255) not null,
+company_name varchar(150) not null,
+sector varchar(100) not null,
+position varchar(100) not null,
+location varchar(100) not null,
 foreign key(person_id) references Person(person_id) on delete cascade on update cascade
 );
 
@@ -178,8 +180,8 @@ go
 
 create table Interviewer(
 interviewer_id int identity primary key,
-role varchar(255) not null,
-person_id int,
+role varchar(100) not null,
+person_id int not null,
 foreign key(person_id) references Person(person_id) on delete cascade on update cascade
 );
 
@@ -194,12 +196,12 @@ go
 
 create table Notification(
 notif_id int identity primary key,
-message varchar(255) not null,
-timestamp datetime not null,
-category varchar(255) not null,
-urgency varchar(255) not null,
-read_status varchar(255) not null,
-recipient_id int,
+message varchar(500) not null,
+timestamp datetime not null default getdate(),
+category varchar(30) not null,
+urgency varchar(20) not null default 'Low' check (urgency='Low' or urgency='Medium' or urgency='High'),
+read_status bit not null default 0,
+recipient_id int not null,
 foreign key(recipient_id) references Person(person_id) on delete cascade on update cascade
 );
 GO
@@ -219,19 +221,19 @@ go
 
 create table Opportunity (
 	opp_id int identity,
-	title varchar(255),
+	title varchar(200) not null,
 	description varchar(1000),
-	type varchar(255),
-	status varchar(255),
-	app_open_date date,
-	app_close_date date,
-	capacity int,
-	location_mode varchar(255),
+	type varchar(30) not null,
+	status varchar(30) not null default 'Open' check(status='Open' or status='Closed'),
+	app_open_date date not null,
+	app_close_date date not null,
+	capacity int not null check(capacity>0),
+	location_mode varchar(30) not null,
 	agreement_id int,
 	offered_by_rep_id int,
 	primary key (opp_id),
-	foreign key (agreement_id) references Cooperation_Agreement on delete set null on update cascade,
-	foreign key (offered_by_rep_id) references Company_Rep on delete set null on update cascade
+	foreign key (agreement_id) references Cooperation_Agreement,
+	foreign key (offered_by_rep_id) references Company_Rep
 );
 go
 
@@ -295,15 +297,15 @@ go
 
 create table Application(
 	app_id int identity,
-	app_date date,
-	status varchar(255),
-	decision_date date,
-	info varchar(1000),
-	student_id int,
-	opp_id int,
+	app_date date not null default getdate(),
+	status varchar(20) not null default 'Pending' check(status='Pending' or status='Accepted' or status='Rejected'),
+	decision_date date not null check(decision_date>=app_date),
+	info varchar(500),
+	student_id int not null,
+	opp_id int not null,
 	primary key (app_id),
-	foreign key (student_id) references Student on delete set null on update cascade,
-	foreign key (opp_id) references Opportunity on delete set null on update cascade
+	foreign key (student_id) references Student,
+	foreign key (opp_id) references Opportunity
 );
 go
 
@@ -500,4 +502,86 @@ project_id INT,
 deadline DATETIME,
 PRIMARY KEY (project_id, deadline),
 FOREIGN KEY (project_id) REFERENCES Research_Project(project_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+go
+
+create table GIU_Participates(
+academic_id int,
+project_id int,
+role varchar(255),
+primary key(academic_id,project_id),
+foreign key(academic_id) references GIU_Academic(person_id) on delete set null on update cascade,
+foreign key(project_id) references Research_Project(project_id) on delete set null on update cascade
+);
+
+go
+
+create table PP_Participates(
+partner_prof_id int,
+project_id int,
+role varchar(255),
+primary key(partner_prof_id,project_id),
+foreign key(partner_prof_id) references Partner_Professor(person_id) on delete set null on update cascade,
+foreign key(project_id) references Research_Project(project_id) on delete set null on update cascade
+);
+
+go
+
+create table Project_Targets_Fund(
+project_id int,
+fund_id int,
+primary key(project_id,fund_id),
+foreign key(project_id) references Research_Project(project_id),
+foreign key(fund_id) references Funding_Opportunity(fund_id)
+);
+
+go
+
+create table Fund_Supports_Mobility(
+fund_id int,
+part_id int,
+primary key(fund_id,part_id),
+foreign key(fund_id) references Funding_Opportunity(fund_id),
+foreign key(part_id) references Mobility(part_id)
+);
+
+go
+
+create table Program_Field(
+program_id int,
+field_id int,
+primary key(program_id,field_id),
+foreign key(program_id) references Program(program_id) on delete cascade on update cascade,
+foreign key(field_id) references Field(field_id) on delete cascade on update cascade
+);
+
+go
+
+create table Prerequisite(
+course_id int,
+prereq_course_id int,
+primary key(course_id,prereq_course_id),
+foreign key(course_id) references Course(course_id) on delete cascade on update cascade,
+foreign key(prereq_course_id) references Course(course_id)
+);
+
+go
+
+create table Student_Skill(
+student_id int,
+skill_id int,
+primary key(student_id,skill_id),
+foreign key(student_id) references Student(person_id),
+foreign key(skill_id) references Skill(skill_id)
+);
+
+go
+
+create table Opp_Skill(
+opp_id int,
+skill_id int,
+primary key(opp_id,skill_id),
+foreign key(opp_id) references Opportunity(opp_id),
+foreign key(skill_id) references Skill(skill_id)
 );
