@@ -31,10 +31,10 @@ GO
 
 create table Course(
  course_id int PRIMARY KEY IDENTITY,
- code VARCHAR(255),
- title VARCHAR(255),
- credit_hours int,
- level varchar(255),
+ code VARCHAR(255) not null,
+ title VARCHAR(255) not null,
+ credit_hours int not null,
+ level varchar(255) not null,
  program_id int,
  CHECK (credit_hours > 0),
  FOREIGN KEY(program_id) REFERENCES Program ON DELETE cascade ON UPDATE CASCADE
@@ -223,14 +223,14 @@ go
 
 create table Opportunity (
 	opp_id int identity,
-	title varchar(255),
+	title varchar(200),
 	description varchar(1000),
-	type varchar(255),
+	type varchar(255) check (type in ('Thesis Topic', 'Short Program', 'Mobility Program')),
 	status varchar(255),
 	app_open_date date,
 	app_close_date date,
 	capacity int,
-	location_mode varchar(255),
+	location_mode varchar(30) check (location_mode in ('Germany', 'Egypt', 'Hybrid', 'Online')),
 	agreement_id int,
 	offered_by_rep_id int,
 	CHECK (app_close_date >= app_open_date),
@@ -259,10 +259,10 @@ go
 
 create table Thesis_Topic(
 	opp_id int,
-	expected_outcomes varchar(1000),
-	funding_info varchar(1000),
-	travel_info varchar(1000),
-	accommodation_info varchar(1000),
+	expected_outcomes varchar(500),
+	funding_info varchar(300),
+	travel_info varchar(300),
+	accommodation_info varchar(300),
 	provider_id int,
 	supervisor_id int,
 	co_supervisor_id int,
@@ -301,10 +301,10 @@ go
 
 create table Application(
 	app_id int identity,
-	app_date date,
-	status varchar(255),
+	app_date datetime,
+	status varchar(255) default 'Pending' check (status in ('Pending', 'Accepted', 'Rejected')),
 	decision_date date,
-	info varchar(1000),
+	info varchar(500),
 	student_id int,
 	opp_id int,
 	primary key (app_id),
@@ -315,9 +315,9 @@ go
 
 create table Application_Document(
 	app_id int,
-	doc_type varchar(255),
-	file_ref varchar(255),
-	upload_date date,
+	doc_type varchar(50) check (doc_type in ('CV', 'Transcript', 'Motivation Letter' ,'Language Certificate')),
+	file_ref varchar(300),
+	upload_date datetime,
 	primary key (app_id, doc_type),
 	foreign key (app_id) references Application on delete cascade on update cascade
 );
@@ -373,12 +373,11 @@ create table Funding_Opportunity(
 fund_id INT PRIMARY KEY IDENTITY,
 name  VARCHAR(255),
 agency VARCHAR(255),
-type VARCHAR(255),
+type VARCHAR(30),
 amount decimal(10,2),
 deadline datetime,
 eligibility_conditions VARCHAR(255),
-status VARCHAR(255),
-
+status VARCHAR(255) default 'Open' check (status in ('Open', 'Closed'))
 );
 go
 
