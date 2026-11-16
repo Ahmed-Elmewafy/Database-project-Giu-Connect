@@ -201,7 +201,7 @@ message varchar(255) not null,
 timestamp datetime not null,
 category varchar(255) not null,
 urgency varchar(255) not null,
-read_status varchar(255) not null,
+read_status bit not null default 0,
 recipient_id int,
 foreign key(recipient_id) references Person(person_id) on delete cascade on update cascade
 );
@@ -209,11 +209,11 @@ GO
 
 create table Cooperation_Agreement (
 	agreement_id INT PRIMARY KEY IDENTITY,
-	title VARCHAR(255) ,
-	scope VARCHAR(255),
+	title VARCHAR(200) ,
+	scope VARCHAR(500),
 	start_date DATETIME ,
 	end_date DATETIME ,
-	status VARCHAR(255),
+	status VARCHAR(30),
 	check (end_date >= start_date),
 	partner_uni_id INT REFERENCES Partner_University(uni_id) on delete cascade on update cascade,
 	coordinator_id INT REFERENCES GIU_Academic(person_id) 
@@ -329,10 +329,10 @@ create table Mobility_Agreement(
 agreement_id INT,
 PRIMARY KEY(agreement_id),
 FOREIGN KEY(agreement_id) REFERENCES Cooperation_Agreement(agreement_id) on delete cascade on update cascade,
-exchange_terms VARCHAR(255),
-double_degree_terms VARCHAR(255),
+exchange_terms VARCHAR(500),
+double_degree_terms VARCHAR(500),
 seat_quota INT,
-tuition_arrangement VARCHAR(255),
+tuition_arrangement VARCHAR(300),
 CHECK (seat_quota > 0)
 );
 
@@ -340,7 +340,7 @@ go
 
 create table Mob_Agr_Semester(
 agreement_id INT ,
-semester VARCHAR(255) ,
+semester VARCHAR(30),
 PRIMARY KEY(agreement_id, semester),
 FOREIGN KEY(agreement_id) REFERENCES Mobility_Agreement(agreement_id) on delete cascade on update cascade
 );
@@ -351,8 +351,8 @@ create table Research_Agreement(
 agreement_id INT ,
 PRIMARY KEY(agreement_id),
 FOREIGN KEY(agreement_id) REFERENCES Cooperation_Agreement(agreement_id) on delete cascade on update cascade,
-ip_terms VARCHAR(255),
-funding_framework VARCHAR(255)
+ip_terms VARCHAR(500),
+funding_framework VARCHAR(300)
 );
 
 go
@@ -361,9 +361,9 @@ create table General_MoU(
 agreement_id INT,
 PRIMARY KEY(agreement_id),
 FOREIGN KEY(agreement_id) REFERENCES Cooperation_Agreement(agreement_id) on delete cascade on update cascade,
-intent VARCHAR(255),
-collab_scope VARCHAR(255),
-renewal_terms VARCHAR(255)
+intent VARCHAR(500),
+collab_scope VARCHAR(500),
+renewal_terms VARCHAR(300)
 
 );
 
@@ -467,7 +467,7 @@ go
 
 create table Visit_Outcome(
 visit_id INT,
-outcome VARCHAR(255),
+outcome VARCHAR(200),
 PRIMARY KEY (visit_id, outcome),
 FOREIGN KEY (visit_id) REFERENCES Professor_Visit(visit_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -476,11 +476,11 @@ go
 create table Agenda_Item (
 visit_id INT,
 seq_no INT,
-activity_type VARCHAR(255),
-title VARCHAR(255),
+activity_type VARCHAR(30),
+title VARCHAR(200),
 date_time DATETIME,
-location VARCHAR(255),
-audience VARCHAR(255),
+location VARCHAR(100),
+audience VARCHAR(100),
 PRIMARY KEY (visit_id, seq_no),
 FOREIGN KEY (visit_id) REFERENCES Professor_Visit(visit_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
