@@ -258,9 +258,9 @@ go
 create table Thesis_Topic(
 	opp_id int,
 	expected_outcomes varchar(500) not null,
-	funding_info varchar(300) not null,
-	travel_info varchar(300) not null,
-	accommodation_info varchar(300) not null,
+	funding_info varchar(300) null,
+	travel_info varchar(300) null,
+	accommodation_info varchar(300) null,
 	provider_id int not null,
 	supervisor_id int not null,
 	co_supervisor_id int,
@@ -377,7 +377,7 @@ type VARCHAR(30) not null check(type in('Research Grant','Mobility Fund','Schola
 amount decimal(10,2) not null check(amount > 0),
 deadline datetime not null,
 eligibility_conditions VARCHAR(255) not null,
-status VARCHAR(255) not null default 'Open' check(status='Open' or status='Closed')
+status VARCHAR(30) not null default 'Open' check(status='Open' or status='Closed')
 
 );
 go
@@ -496,7 +496,7 @@ end_date DATETIME not null,
 res_agreement_id INT,
 CHECK (end_date >= start_date),
 PRIMARY KEY (project_id),
-FOREIGN KEY (res_agreement_id) REFERENCES Research_Agreement(agreement_id) ON DELETE cascade ON UPDATE CASCADE
+FOREIGN KEY (res_agreement_id) REFERENCES Research_Agreement(agreement_id) ON UPDATE CASCADE
 );
 go
 
