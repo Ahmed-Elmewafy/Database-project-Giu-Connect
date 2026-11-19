@@ -405,7 +405,7 @@ set nocount on
 begin try
 if not exists(select 1 from Partner_University where uni_id=@partner_uni_id)
 begin raiserror('Partner University does not exist',16,1); return; end
-insert into Partner_Department(name,description,uni_id)
+insert into Partner_Department(name,description,partner_uni_id)
 values(@name,@description,@partner_uni_id);
 print 'Partner Department added successfully';
 end try
@@ -702,7 +702,7 @@ RETURN (
     JOIN Partner_Department PD 
     ON PP.pdept_id = PD.pdept_id
     JOIN University U 
-    ON PD.uni_id = U.uni_id
+    ON PD.partner_uni_id = U.uni_id
     WHERE G.academic_id = @academic_id
     GROUP BY PP.person_id, Pers.full_name, U.name
 );
@@ -1262,7 +1262,7 @@ BEGIN
         JOIN Partner_Department PD 
         ON PP.pdept_id = PD.pdept_id
         JOIN Cooperation_Agreement CA 
-        ON PD.uni_id = CA.partner_uni_id
+        ON PD.partner_uni_id = CA.partner_uni_id
         WHERE PP.person_id = @partner_prof_id
           AND CA.agreement_id = @agreement_id
     )
@@ -1383,7 +1383,7 @@ RETURN (
     JOIN Partner_Department PD_Prof 
     ON PP.pdept_id = PD_Prof.pdept_id
     JOIN Partner_Department PD 
-    ON PD_Prof.uni_id = PD.uni_id
+    ON PD_Prof.partner_uni_id = PD.partner_uni_id
     JOIN Partner_Program PProg 
     ON PD.pdept_id = PProg.pdept_id
     LEFT JOIN Partner_Program_Field PPF 
@@ -3376,7 +3376,7 @@ RETURN
             ON PP.pdept_id = PD.pdept_id
 
         INNER JOIN Partner_University PU
-            ON PD.uni_id = PU.uni_id
+            ON PD.partner_uni_id = PU.uni_id
 
         INNER JOIN University U
             ON PU.uni_id = U.uni_id

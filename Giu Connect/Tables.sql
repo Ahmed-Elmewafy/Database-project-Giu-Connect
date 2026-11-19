@@ -1,10 +1,8 @@
 ﻿create table Faculty
 (
-dept_id int PRIMARY KEY IDENTITY,
+faculty_id int PRIMARY KEY IDENTITY,
 name VARCHAR(150),
 description VARCHAR(500),
-faculty_id int not null
-foreign key(faculty_id) references Faculty(faculty_id) on update cascade
 );
 GO
 
@@ -99,8 +97,8 @@ create table Partner_Department
 pdept_id int PRIMARY KEY IDENTITY,
 name VARCHAR(150) not null,
 description VARCHAR(500),
-uni_id int not null,
-FOREIGN KEY(uni_id) REFERENCES Partner_University ON DELETE cascade ON UPDATE CASCADE,
+partner_uni_id int not null,
+FOREIGN KEY(partner_uni_id) REFERENCES Partner_University ON DELETE cascade ON UPDATE CASCADE,
 );
 GO 
 
@@ -182,7 +180,7 @@ go
 create table Interviewer(
 interviewer_id int identity primary key,
 role varchar(100) not null,
-person_id int not null,
+person_id int unique not null,
 foreign key(person_id) references Person(person_id) on delete cascade on update cascade
 );
 
@@ -303,7 +301,7 @@ create table Application(
 	app_id int identity,
 	app_date date not null default getdate(),
 	status varchar(20) not null default 'Pending' check(status='Pending' or status='Accepted' or status='Rejected'),
-	decision_date date not null check(decision_date>=app_date),
+	decision_date date check(decision_date>=app_date),
 	info varchar(500),
 	student_id int not null,
 	opp_id int not null,
@@ -400,7 +398,7 @@ part_id INT IDENTITY,
 status VARCHAR(30) not null default'Active' check(status='Active' or status='Completed'),
 start_date DATETIME,
 end_date DATETIME,
-app_id INT,
+app_id INT UNIQUE ,
 CHECK (end_date >= start_date),
 PRIMARY KEY (part_id),
 FOREIGN KEY (app_id) REFERENCES Application(app_id) ON DELETE cascade ON UPDATE CASCADE
@@ -416,7 +414,7 @@ final_outcome VARCHAR(300),
 host_uni_id INT,
 PRIMARY KEY (part_id),
 FOREIGN KEY (part_id) REFERENCES Participation(part_id) ON DELETE CASCADE ON UPDATE CASCADE,
-FOREIGN KEY (host_uni_id) REFERENCES University(uni_id) ON DELETE cascade ON UPDATE CASCADE
+FOREIGN KEY (host_uni_id) REFERENCES University(uni_id)
 );
 go
 
@@ -458,7 +456,7 @@ coordinator_id INT,
 agreement_id INT,
 CHECK (end_date >= start_date),
 PRIMARY KEY (visit_id),
-FOREIGN KEY (partner_prof_id) REFERENCES Partner_Professor(person_id) ON DELETE cascade ON UPDATE CASCADE,
+FOREIGN KEY (partner_prof_id) REFERENCES Partner_Professor(person_id),
 FOREIGN KEY (host_faculty_id) REFERENCES Faculty(faculty_id) ON DELETE cascade ON UPDATE CASCADE,
 FOREIGN KEY (coordinator_id) REFERENCES GIU_Academic(person_id),
 FOREIGN KEY (agreement_id) REFERENCES Cooperation_Agreement(agreement_id)
