@@ -97,8 +97,8 @@ create table Partner_Department
 pdept_id int PRIMARY KEY IDENTITY,
 name VARCHAR(150) not null,
 description VARCHAR(500),
-uni_id int not null
-FOREIGN KEY(uni_id) REFERENCES Partner_University ON DELETE cascade ON UPDATE CASCADE,
+partner_uni_id int not null
+FOREIGN KEY(partner_uni_id) REFERENCES Partner_University ON DELETE cascade ON UPDATE CASCADE,
 );
 GO 
 
@@ -375,7 +375,7 @@ agency VARCHAR(255) not null,
 type VARCHAR(30) not null check(type in('Research Grant','Mobility Fund','Scholarship')),
 amount decimal(10,2) not null check(amount > 0),
 deadline datetime not null,
-eligibility_conditions VARCHAR(255) not null
+eligibility_conditions VARCHAR(255) not null,
 status VARCHAR(255) not null default 'Open' check(status='Open' or status='Closed'),
 
 );
