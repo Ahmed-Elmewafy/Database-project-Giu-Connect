@@ -1,8 +1,8 @@
 ﻿create table Faculty
 (
 faculty_id int PRIMARY KEY IDENTITY,
-name VARCHAR(150),
-description VARCHAR(500),
+name VARCHAR(150) not null,
+description VARCHAR(500)
 );
 GO
 
@@ -23,8 +23,8 @@ name VARCHAR(150) not null,
 degree_level varchar(30) not null,
 total_credit_hours int not null check (total_credit_hours > 0),
 description varchar(500),
-dept_id int not null
-FOREIGN KEY(dept_id) REFERENCES Department ON UPDATE CASCADE,
+dept_id int not null,
+FOREIGN KEY(dept_id) REFERENCES Department ON UPDATE CASCADE
 );
 GO
 
@@ -33,9 +33,9 @@ create table Course
  code VARCHAR(20) not null unique,
  title VARCHAR(150) not null,
  credit_hours int not null check (credit_hours > 0),
- level int not null,
- program_id int not null
- FOREIGN KEY(program_id) REFERENCES Program ON UPDATE CASCADE,
+ level int not null CHECK (level > 0),
+ program_id int not null,
+ FOREIGN KEY(program_id) REFERENCES Program ON UPDATE CASCADE
 );
 GO
 
@@ -52,8 +52,8 @@ create table Research_Area
 area_id int PRIMARY KEY IDENTITY,
 name VARCHAR(150) not null,
 description VARCHAR(500),
-field_id int not null
-FOREIGN KEY(field_id) REFERENCES Field ON UPDATE CASCADE,
+field_id int not null,
+FOREIGN KEY(field_id) REFERENCES Field ON UPDATE CASCADE
 );
 GO
 
@@ -87,8 +87,8 @@ create table Partner_University
 (
 uni_id int PRIMARY KEY,
 partnership_status VARCHAR(30) not null,
-contact_info VARCHAR(300) not null
-FOREIGN KEY(uni_id) REFERENCES University ON DELETE CASCADE ON UPDATE CASCADE,
+contact_info VARCHAR(300) not null,
+FOREIGN KEY(uni_id) REFERENCES University ON DELETE CASCADE ON UPDATE CASCADE
 );
 GO
 
@@ -97,8 +97,8 @@ create table Partner_Department
 pdept_id int PRIMARY KEY IDENTITY,
 name VARCHAR(150) not null,
 description VARCHAR(500),
-partner_uni_id int not null
-FOREIGN KEY(partner_uni_id) REFERENCES Partner_University ON DELETE cascade ON UPDATE CASCADE,
+partner_uni_id int not null,
+FOREIGN KEY(partner_uni_id) REFERENCES Partner_University ON DELETE cascade ON UPDATE CASCADE
 );
 GO 
 
@@ -108,8 +108,8 @@ pprog_id int PRIMARY KEY IDENTITY,
 name VARCHAR(150) not null,
 degree_level varchar(30) not null,
 description VARCHAR(500),
-pdept_id int not null
-FOREIGN KEY(pdept_id) REFERENCES Partner_Department ON DELETE cascade ON UPDATE CASCADE,
+pdept_id int not null,
+FOREIGN KEY(pdept_id) REFERENCES Partner_Department(pdept_id) ON DELETE cascade ON UPDATE CASCADE
 );
 GO
 
@@ -224,12 +224,12 @@ create table Opportunity (
 	title varchar(200) not null,
 	description varchar(1000),
 	type varchar(30) not null check (type='Short Program' or type='Mobility Program' or type='Thesis Topic'),
-	status varchar(30) not null default 'Open' check(status='Open' or status='Closed'),
+	status varchar(30) not null default 'Open' CHECK(status IN ('Open', 'Closed', 'Cancelled')),
 	app_open_date date not null,
 	app_close_date date not null,
 	capacity int not null,
 	location_mode varchar(30) not null check (location_mode in ('Germany', 'Egypt', 'Hybrid', 'Online')),
-	agreement_id int,
+	agreement_id int not null,
 	offered_by_rep_id int,
 	CHECK (app_close_date >= app_open_date),
 	CHECK (capacity > 0),
@@ -301,12 +301,13 @@ go
 create table Application(
 	app_id int identity,
 	app_date date not null default getdate(),
-	status varchar(20) not null default 'Pending' check(status='Pending' or status='Accepted' or status='Rejected'),
-	decision_date date default null check(decision_date = null or decision_date>=app_date),
+	status varchar(20) not null default 'Pending' CHECK(status IN ('Pending', 'Accepted', 'Rejected', 'Withdrawn')),
+	decision_date date default null check(decision_date is null or decision_date>=app_date),
 	info varchar(500),
-	student_id int not null,
-	opp_id int not null,
+	student_id int  not null,
+	opp_id int  not null,
 	primary key (app_id),
+	UNIQUE(student_id, opp_id),
 	foreign key (student_id) references Student,
 	foreign key (opp_id) references Opportunity
 );
@@ -376,7 +377,7 @@ type VARCHAR(30) not null check(type in('Research Grant','Mobility Fund','Schola
 amount decimal(10,2) not null check(amount > 0),
 deadline datetime not null,
 eligibility_conditions VARCHAR(255) not null,
-status VARCHAR(255) not null default 'Open' check(status='Open' or status='Closed'),
+status VARCHAR(255) not null default 'Open' check(status='Open' or status='Closed')
 
 );
 go
@@ -433,7 +434,7 @@ create table Course_Equivalency (
 part_id INT,
 host_course_title VARCHAR(150) not null,
 host_credits decimal(4,1) not null check (host_credits > 0),
-transferred_credits decimal(4,1) not null check (transferred_credits > 0),
+transferred_credits decimal(4,1) not null check (transferred_credits > 0)  CHECK (transferred_credits <= host_credits),
 approval_status VARCHAR(30) not null default 'Pending' check(approval_status in('Approved','Rejected','Pending')),
 giu_course_id INT not null,
 PRIMARY KEY (part_id, host_course_title),
@@ -454,7 +455,7 @@ follow_up_report VARCHAR(1000),
 partner_prof_id INT NOT NULL,
 host_faculty_id INT NOT NULL,
 coordinator_id INT NOT NULL,
-agreement_id INT,
+agreement_id INT not null,
 CHECK (end_date >= start_date),
 PRIMARY KEY (visit_id),
 FOREIGN KEY (partner_prof_id) REFERENCES Partner_Professor(person_id),
@@ -474,10 +475,10 @@ go
 
 create table Agenda_Item (
 visit_id INT,
-seq_no INT IDENTITY ,
-activity_type VARCHAR(30) check(activity_type in('Lecture','Meeting','Workshop')),
+seq_no INT NOT NULL,
+activity_type VARCHAR(30) check(activity_type in('Lecture','Meeting','Workshop')) not null,
 title VARCHAR(200) not null,
-date_time DATETIME,
+date_time DATETIME not null,
 location VARCHAR(100),
 audience VARCHAR(100),
 PRIMARY KEY (visit_id, seq_no),
@@ -487,11 +488,11 @@ go
 
 create table Research_Project(
 project_id INT IDENTITY,
-title VARCHAR(200), 
-description VARCHAR(1000),
+title VARCHAR(200) not null, 
+description VARCHAR(1000) not null,
 status VARCHAR(30) not null default 'Ongoing' check(status='Ongoing' or status='Completed'),
-start_date DATETIME,
-end_date DATETIME,
+start_date DATETIME not null,
+end_date DATETIME not null,
 res_agreement_id INT,
 CHECK (end_date >= start_date),
 PRIMARY KEY (project_id),
@@ -503,7 +504,7 @@ create table Research_Output(
 output_id INT IDENTITY,
 type VARCHAR(30) not null check(type in('Publication','Deliverable','Dataset','Report')),
 title VARCHAR(200) not null,
-date DATE,
+date DATE not null,
 reference VARCHAR(200),
 status VARCHAR(30) not null default 'Pending' check(status='Pending' or status='Published'),
 project_id INT not null,
