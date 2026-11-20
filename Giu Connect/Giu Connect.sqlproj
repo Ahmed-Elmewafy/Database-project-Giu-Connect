@@ -57,8 +57,8 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables.sql" />
-    <Build Include="Executions.sql" />
-    <Build Include="Insertions.sql" />
+    <None Include="Executions.sql" />
+    <None Include="Insertions.sql" />
     <Build Include="Procedures.sql" />
   </ItemGroup>
   <ItemGroup>
